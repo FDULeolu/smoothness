@@ -1,0 +1,2 @@
+n_training_sample,error,upper_bound,lipschitz,hessian
+128,5.281856,94.78158476036464,111.46362400172886,12.95471611485118
