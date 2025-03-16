@@ -59,11 +59,11 @@ def generate_train_test_set(train_samples, test_samples, xdim, fdim, device):
 """
 
 
-def run_experiment(X_train, X_test, y_train, y_test, base_path=None, save_path=None, dropout_p=0.01, width=256, learning_rate=[0.0003, 0.0003], device='cpu'):
+def run_experiment(X_train, X_test, y_train, y_test, base_path=None, save_path=None, dropout_p=0.01, width=1024, learning_rate=[0.0003, 0.001], device='cpu'):
     base_path = BaseNet.BaseNet(X=X_train, y=y_train, base_path=base_path, dropout_p=dropout_p, width=width, learning_rate=learning_rate, device=device)
     save_path, intercept, model = Train.Train(X=X_train, y=y_train, bandwidth=0.1, transfer_path=None, base_path=base_path, save_path=save_path, 
                                         dropout_p=dropout_p, width=width, transfer=False, learning_rate=learning_rate, device=device)
-    _, error = Validate_Test.Test(X=X_test, y=y_test, intercept=intercept, save_path=save_path, dropout_p=0.01, width=256, device=device)
+    _, error = Validate_Test.Test(X=X_test, y=y_test, intercept=intercept, save_path=save_path, dropout_p=0.01, width=width, device=device)
     
     input_dim = X_train.shape[1]
     n_sample = X_train.shape[0]
@@ -89,7 +89,8 @@ if __name__ == '__main__':
     base_path = './path/base.pth'
     save_path = './path/save.pth'
 
-    num_training_samples = [128, 256, 512, 1024, 2048, 4096, 8192, 16384]
+    # num_training_samples = [128, 256, 512, 1024, 2048, 4096, 8192, 16384]
+    num_training_samples = [128, 256, 512, 1024, 2048]
     # test
     # num_training_samples = [128]
     num_test_samples = [i // 2 for i in num_training_samples]

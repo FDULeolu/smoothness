@@ -2,6 +2,7 @@ import os
 import pandas as pd
 import numpy as np
 from datetime import datetime
+import Network
 
 import torch
 import torch.nn as nn
@@ -89,20 +90,25 @@ def compute_first_second_order_derivative(X, model):
 
 
 def compute_upper_bound(model, xdim, lipschitz, beta=2):
-    hidden_layers = []
-    max_width = 0
+    # Recursively collect all linear layers
+    linear_layers = [m for m in model.modules() if isinstance(m, nn.Linear)]
     
-    for layer in model.children():
-        if isinstance(layer, nn.Linear):
-            out_features = layer.out_features
-            hidden_layers.append(out_features)
-            max_width = max(max_width, out_features)
-    num_hidden_layers = len(hidden_layers) - 1  # 除去输出层
-
-    D = num_hidden_layers
-    W = max_width
+    if len(linear_layers) < 2:
+        raise ValueError("The model must have at least one hidden layer besides the output layer.")
+    
+    # Assume the last linear layer is the output layer
+    hidden_layers = linear_layers[:-1]
+    
+    # Compute the number of hidden layers
+    D = len(hidden_layers)
+    
+    # Compute the maximum width among the hidden layers only
+    W = max(layer.out_features for layer in hidden_layers)
 
     return (W * D) ** (-4 * beta / xdim) * lipschitz ** 2
 
-
+if __name__ == '__main__':
+    EML_FNN = Network.FNN(input_dim=100, init_weights=True)
+    print(EML_FNN)
+    print(compute_upper_bound(EML_FNN, 100, 10))
 

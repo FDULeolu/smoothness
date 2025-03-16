@@ -58,6 +58,7 @@ def Train(X, y, bandwidth, transfer_path, base_path, save_path, dropout_p, width
     best_loss = 1e10
 
     params = [p for p in EML_FNN.parameters() if p.requires_grad]
+    # 当使用transfer的时候，用第一个lr，不使用transfer的时候使用第二个lr
     if transfer == True: 
         EML_FNN.load_state_dict(torch.load(transfer_path))
         optimizer = optim.Adam(params, lr=learning_rate[0], betas=(0.9, 0.99))  
